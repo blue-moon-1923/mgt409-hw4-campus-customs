@@ -1,0 +1,25 @@
+# Secrets — never commit a real key
+.env
+.env.local
+
+# Course data pack: the database and the product photographs are supplied by the
+# course and are not redistributed here. See README.md for where to put them.
+data/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+npm-debug.log*
+
+# Local notes that contain test credentials
+*.local.md
+
+# macOS
+.DS_Store

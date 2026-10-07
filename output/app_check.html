@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campus Customs — App Check (Homework 4, Problem 11)</title>
+    <style>
+      :root {
+        --navy: #002147;
+        --navy-light: #00356b;
+        --bone: #faf8f4;
+        --line: #e2ded5;
+        --muted: #4f5a66;
+        --brass: #8a6a2f;
+        --ok: #1f6b45;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bone);
+        color: #10161f;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+      }
+      header {
+        background: var(--navy);
+        color: #fff;
+        padding: 2.25rem 1.5rem;
+      }
+      header .wrap { max-width: 900px; margin: 0 auto; }
+      header h1 { margin: 0 0 0.4rem; font-size: 1.9rem; letter-spacing: -0.01em; }
+      header p { margin: 0; color: #cfe0f0; font-size: 1rem; }
+      main { max-width: 900px; margin: 0 auto; padding: 2.25rem 1.5rem 4rem; }
+      .meta {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--brass);
+        border-radius: 6px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 2.5rem;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+      .meta b { color: #10161f; }
+      section { margin-bottom: 3.25rem; }
+      h2 {
+        font-size: 1.4rem;
+        margin: 0 0 0.3rem;
+        color: var(--navy);
+        border-bottom: 2px solid var(--navy);
+        padding-bottom: 0.45rem;
+      }
+      .asked {
+        margin: 0 0 1rem;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+      .asked code {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+        font-size: 0.9rem;
+      }
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 10px 28px -18px rgba(0, 33, 71, 0.5);
+      }
+      .caption { margin: 0.9rem 0 0; font-size: 1.02rem; }
+      .check {
+        margin: 0.75rem 0 0;
+        padding: 0.8rem 1rem;
+        background: #eef6f1;
+        border: 1px solid #c3dfd0;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        color: #14492f;
+      }
+      .check b { color: var(--ok); }
+      table { border-collapse: collapse; width: 100%; margin-top: 0.6rem; font-size: 0.92rem; }
+      th, td { border: 1px solid #c3dfd0; padding: 0.3rem 0.6rem; text-align: left; }
+      th { background: #ddeee4; }
+      footer {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <h1>Campus Customs — App Check</h1>
+        <p>MGT 409 Homework 4, Problem 11 · checked against the running site on 5 October 2026</p>
+      </div>
+    </header>
+
+    <main>
+      <p class="meta">
+        <b>How this was checked.</b> The FastAPI backend was running on
+        <b>http://127.0.0.1:8000</b> and the React site on <b>http://127.0.0.1:5173</b>. Each
+        screenshot below is of the live site. Every number the assistant gave was then compared
+        against <b>data/campus_customs.db</b> by querying the database directly.
+      </p>
+
+      <section>
+        <h2>Check 1 — The chat reads real stock and price from the database</h2>
+        <p class="asked">
+          Asked in the chat panel: <code>How many Boola Boola T Shirts are left in each size, and
+          what does it cost?</code>
+        </p>
+        <img src="app_check_images/inventory.png" alt="Chat panel showing per-size stock and price for the Boola Boola T Shirt" />
+        <p class="caption">
+          The assistant answers with an exact price and a per-size count — <b>$32</b>, sold out in
+          L, and XS: 12, S: 12, M: 15, XL: 2 (low stock), XXL: 20. It leads with the sold-out size
+          rather than burying it, and the product card underneath is built by the backend from the
+          database rather than from anything the model typed.
+        </p>
+        <div class="check">
+          <b>Verified against the database.</b> Every figure matches the <code>catalogue</code> and
+          <code>inventory</code> tables exactly:
+          <table>
+            <tr><th>Size</th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>XXL</th><th>Price</th></tr>
+            <tr><th>Database</th><td>12</td><td>12</td><td>15</td><td>0</td><td>2</td><td>20</td><td>$32</td></tr>
+            <tr><th>Assistant</th><td>12</td><td>12</td><td>15</td><td>sold out</td><td>2</td><td>20</td><td>$32</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>Check 2 — A category question rebuilds the page as a results grid</h2>
+        <p class="asked">
+          Asked in the chat panel: <code>What t-shirts do you sell?</code>
+        </p>
+        <img src="app_check_images/search_results.png" alt="Products page showing a Yale T-shirts results banner and a grid of matching product cards" />
+        <p class="caption">
+          The site navigated itself to the Products page and replaced the full catalogue with a
+          captioned results grid — heading <b>“Yale T-shirts”</b>, the original question shown
+          underneath, and <b>25 products</b>. Each card carries the photograph, garment type, name,
+          price, a short description, colour swatches, and which sizes are in stock, and clicking
+          any of them opens that product's own detail page.
+        </p>
+        <div class="check">
+          <b>Verified against the database.</b> The catalogue contains exactly <b>25</b> products in
+          the T-Shirts category and all of them are priced at <b>$32</b>, which is what the
+          assistant said: “We have 25 T-shirts, and they're all $32.” This is the complete list, not
+          a sample — the agent used the <code>browse_category</code> tool, which returns the whole
+          category rather than the eight best matches a search would return.
+        </div>
+      </section>
+
+      <section>
+        <h2>Check 3 — Usability improvement from Problem 9: search, filter and sort</h2>
+        <p class="asked">
+          On the Products page: typed <code>navy</code>, chose the <code>Hoodies</code> category, and
+          sorted by <code>Price: low to high</code>.
+        </p>
+        <img src="app_check_images/usability_filters.png" alt="Products page toolbar with a search term, category filter, sort order, and a live result count" />
+        <p class="caption">
+          The toolbar narrowed 102 products to <b>25 of 102</b> and sorted them cheapest first
+          ($45, $45, $68), with a <b>Clear</b> button appearing once a filter is active. Before this
+          change the page was a single unsorted grid of 102 items with no way to search it.
+        </p>
+        <div class="check">
+          <b>Why the category filter is the interesting part.</b> The three cards shown are filed in
+          the database under three <i>different</i> labels — “hooded pullover sweatshirt”, “hooded
+          sweatshirt”, and “pullover hoodie”. The raw <code>garment_type</code> column holds
+          <b>22 labels</b> for about six kinds of garment, so a dropdown built straight from it would
+          have been unusable. One shared mapping folds them into six real categories, and the same
+          mapping is used by the filter here and by the assistant's <code>browse_category</code>
+          tool, so the page and the chat always agree.
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Screenshots are stored in <code>output/app_check_images/</code>. To reproduce: run
+      <code>uvicorn main:app --reload --port 8000</code> from <code>backend/</code> and
+      <code>npm run dev</code> from <code>frontend/</code>, then open
+      <code>http://127.0.0.1:5173</code>.
+    </footer>
+  </body>
+</html>
